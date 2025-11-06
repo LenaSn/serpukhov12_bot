@@ -169,6 +169,9 @@ async def send_question(user_id: int, attempt_id: int, q_index: int):
 # -----------------------
 @dp.callback_query_handler(lambda c: c.data.startswith("answer|"))
 async def process_answer(callback_query: types.CallbackQuery):
+    if not hasattr(dp, "current_attempts") or attempt_id not in dp.current_attempts:
+        await callback_query.answer("⏳ Сессия теста устарела. Начни заново — /test", show_alert=True)
+        return
     try:
         _, attempt_id_s, q_index_s, choice_s = callback_query.data.split("|")
         attempt_id = int(attempt_id_s)
@@ -303,7 +306,6 @@ async def cmd_reset(message: types.Message):
 async def fallback(message: types.Message):
     await message.reply("Напиши /test чтобы начать тест, или /help для справки.")
 
-# -----------------------
 if __name__ == "__main__":
     asyncio.run(init_db())
     executor.start_polling(dp, skip_updates=True)
