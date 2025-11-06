@@ -307,5 +307,9 @@ async def fallback(message: types.Message):
     await message.reply("Напиши /test чтобы начать тест, или /help для справки.")
 
 if __name__ == "__main__":
+    import asyncio
+    import nest_asyncio
+
+    nest_asyncio.apply()
     asyncio.run(init_db())
     executor.start_polling(dp, skip_updates=True)
